@@ -68,22 +68,18 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/NSManagedObjectContext.html">NSManagedObjectContext</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Functions.html">Functions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit13deleteObjectsuRxCSo15NSManagedObjectrFTGSax_9inContextCSo22NSManagedObjectContext_T_">deleteObjects(_:inContext:)</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Functions.html#/s:F14JSQCoreDataKit6entityFT4nameSS7contextCSo22NSManagedObjectContext_CSo19NSEntityDescription">entity(name:context:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit5fetchuRxCSo15NSManagedObjectrFzT7requestGCS_12FetchRequestx_9inContextCSo22NSManagedObjectContext_GSax_">fetch(request:inContext:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit7migrateFzVS_13CoreDataModelT_">migrate(_:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit10resetStackFTCS_13CoreDataStack5queuePSo17OS_dispatch_queue_10completionFT6resultOS_11StackResult_T__T_">resetStack(_:queue:completion:)</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Functions.html#/s:F14JSQCoreDataKit11saveContextFTCSo22NSManagedObjectContext4waitSb10completionGSqFOS_10SaveResultT___T_">saveContext(_:wait:completion:)</a>
@@ -501,10 +497,57 @@ and returns whether or not a migration is needed.</p>
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV14JSQCoreDataKit13CoreDataModel7migrateFzT_T_"></a>
+                    <a name="//apple_ref/swift/Method/migrate()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV14JSQCoreDataKit13CoreDataModel7migrateFzT_T_">migrate()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Progressively migrates the persistent store of the <code><a href="../Structs/CoreDataModel.html">CoreDataModel</a></code> based on mapping models found in the model&rsquo;s bundle.
+If the model returns false from <code><a href="../Structs/CoreDataModel.html#/s:vV14JSQCoreDataKit13CoreDataModel14needsMigrationSb">needsMigration</a></code>, then this function does nothing.</p>
+
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>If an error occurs, either an <code>NSError</code> or a <code><a href="../Enums/MigrationError.html">MigrationError</a></code> is thrown. If an <code>NSError</code> is thrown, it could
+specify any of the following: an error checking persistent store metadata, an error from <code>NSMigrationManager</code>, or
+an error from <code>NSFileManager</code>.</p>
+
+</div>
+
+<div class="aside aside-warning">
+    <p class="aside-title">Warning</p>
+    <p>Migration is only supported for on-disk persistent stores.
+A complete &lsquo;path&rsquo; of mapping models must exist between the peristent store&rsquo;s version and the model&rsquo;s version.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">migrate</span><span class="p">()</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2016 <a class="link" href="https://twitter.com/jesse_squires" target="_blank" rel="external">Jesse Squires</a>. All rights reserved. (Last updated: 2016-04-12)</p>
+          <p>&copy; 2016 <a class="link" href="https://twitter.com/jesse_squires" target="_blank" rel="external">Jesse Squires</a>. All rights reserved. (Last updated: 2016-05-06)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.6.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

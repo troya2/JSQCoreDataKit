@@ -68,22 +68,18 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/NSManagedObjectContext.html">NSManagedObjectContext</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Functions.html">Functions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit13deleteObjectsuRxCSo15NSManagedObjectrFTGSax_9inContextCSo22NSManagedObjectContext_T_">deleteObjects(_:inContext:)</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Functions.html#/s:F14JSQCoreDataKit6entityFT4nameSS7contextCSo22NSManagedObjectContext_CSo19NSEntityDescription">entity(name:context:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit5fetchuRxCSo15NSManagedObjectrFzT7requestGCS_12FetchRequestx_9inContextCSo22NSManagedObjectContext_GSax_">fetch(request:inContext:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit7migrateFzVS_13CoreDataModelT_">migrate(_:)</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:F14JSQCoreDataKit10resetStackFTCS_13CoreDataStack5queuePSo17OS_dispatch_queue_10completionFT6resultOS_11StackResult_T__T_">resetStack(_:queue:completion:)</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Functions.html#/s:F14JSQCoreDataKit11saveContextFTCSo22NSManagedObjectContext4waitSb10completionGSqFOS_10SaveResultT___T_">saveContext(_:wait:completion:)</a>
@@ -129,11 +125,9 @@ It manages the managed object model, the persistent store coordinator, and manag
 
 <p>It is composed of a main context and a background context.
 These two contexts operate on the main queue and a private background queue, respectively.
-The background context is the root level context, which is connected to the persistent store coordinator.
-The main context is a child of the background context.</p>
+Both are connected to the persistent store coordinator and data between them is perpetually kept in sync.</p>
 
-<p>Data between these two primary contexts and child contexts is kept in sync.
-Changes to a context are propagated to its parent context and eventually the persistent store when saving.</p>
+<p>Changes to a child context are propagated to its parent context and eventually the persistent store when saving.</p>
 
 <div class="aside aside-warning">
     <p class="aside-title">Warning</p>
@@ -193,7 +187,8 @@ Changes to a context are propagated to its parent context and eventually the per
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>The main managed object context for the stack, which operates on the main queue.
-This context is a child context of <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack17backgroundContextCSo22NSManagedObjectContext">backgroundContext</a></code>.</p>
+This context is a root level context that is connected to the <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack16storeCoordinatorCSo28NSPersistentStoreCoordinator">storeCoordinator</a></code>.
+It is kept in sync with <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack17backgroundContextCSo22NSManagedObjectContext">backgroundContext</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -221,7 +216,8 @@ This context is a child context of <code><a href="../Classes/CoreDataStack.html#
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>The background managed object context for the stack, which operates on a background queue.
-This context is the root level context that is connected to the <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack16storeCoordinatorCSo28NSPersistentStoreCoordinator">storeCoordinator</a></code>.</p>
+This context is a root level context that is connected to the <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack16storeCoordinatorCSo28NSPersistentStoreCoordinator">storeCoordinator</a></code>.
+It is kept in sync with <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack11mainContextCSo22NSManagedObjectContext">mainContext</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -248,7 +244,7 @@ This context is the root level context that is connected to the <code><a href=".
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The persistent store coordinator for the stack. The <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack17backgroundContextCSo22NSManagedObjectContext">backgroundContext</a></code> is connected to this coordinator.</p>
+                        <p>The persistent store coordinator for the stack. Both contexts are connected to this coordinator.</p>
 
                       </div>
                       <div class="declaration">
@@ -286,18 +282,21 @@ This context is the root level context that is connected to the <code><a href=".
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a new child context whose parent is <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack11mainContextCSo22NSManagedObjectContext">mainContext</a></code> and has the specified <code>concurrencyType</code> and <code>mergePolicyType</code>.
-Saving the returned context will propagate changes through <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack11mainContextCSo22NSManagedObjectContext">mainContext</a></code>, <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack17backgroundContextCSo22NSManagedObjectContext">backgroundContext</a></code>,
-and finally the persistent store.</p>
+                        <p>Creates a new child context with the specified <code>concurrencyType</code> and <code>mergePolicyType</code>.</p>
+
+<p>The parent context is either <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack11mainContextCSo22NSManagedObjectContext">mainContext</a></code> or <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack17backgroundContextCSo22NSManagedObjectContext">backgroundContext</a></code> dependending on the specified <code>concurrencyType</code>:
+* <code>.PrivateQueueConcurrencyType</code> will set <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack17backgroundContextCSo22NSManagedObjectContext">backgroundContext</a></code> as the parent.
+* <code>.MainQueueConcurrencyType</code> will set <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack11mainContextCSo22NSManagedObjectContext">mainContext</a></code> as the parent.</p>
+
+<p>Saving the returned context will propagate changes through the parent context and then to the persistent store.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">childContext</span><span class="p">(</span>
-        <span class="n">concurrencyType</span> <span class="nv">concurrencyType</span><span class="p">:</span> <span class="kt">NSManagedObjectContextConcurrencyType</span> <span class="o">=</span> <span class="o">.</span><span class="kt">PrivateQueueConcurrencyType</span><span class="p">,</span>
-                        <span class="nv">mergePolicyType</span><span class="p">:</span> <span class="kt">NSMergePolicyType</span> <span class="o">=</span> <span class="o">.</span><span class="kt">MergeByPropertyObjectTrumpMergePolicyType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">ChildContext</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">childContext</span><span class="p">(</span><span class="n">concurrencyType</span> <span class="nv">concurrencyType</span><span class="p">:</span> <span class="kt">NSManagedObjectContextConcurrencyType</span> <span class="o">=</span> <span class="o">.</span><span class="kt">MainQueueConcurrencyType</span><span class="p">,</span>
+                                             <span class="nv">mergePolicyType</span><span class="p">:</span> <span class="kt">NSMergePolicyType</span> <span class="o">=</span> <span class="o">.</span><span class="kt">MergeByPropertyObjectTrumpMergePolicyType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">ChildContext</span></code></pre>
 
                         </div>
                       </div>
@@ -313,7 +312,7 @@ and finally the persistent store.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The concurrency pattern to use. The default is <code>.PrivateQueueConcurrencyType</code>.</p>
+                                  <p>The concurrency pattern to use. The default is <code>.MainQueueConcurrencyType</code>.</p>
 
                                 </div>
                               </td>
@@ -336,8 +335,78 @@ and finally the persistent store.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>A new child managed object context whose parent is <code><a href="../Classes/CoreDataStack.html#/s:vC14JSQCoreDataKit13CoreDataStack11mainContextCSo22NSManagedObjectContext">mainContext</a></code>.</p>
+                        <p>A new child managed object context.</p>
 
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14JSQCoreDataKit13CoreDataStack5resetFT7onQueuePSo17OS_dispatch_queue_10completionFT6resultOS_11StackResult_T__T_"></a>
+                    <a name="//apple_ref/swift/Method/reset(onQueue:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14JSQCoreDataKit13CoreDataStack5resetFT7onQueuePSo17OS_dispatch_queue_10completionFT6resultOS_11StackResult_T__T_">reset(onQueue:completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Resets the managed object contexts in the stack on their respective threads.
+Then, if the coordinator is connected to a persistent store, the store will be deleted and recreated on a background thread.
+The completion closure is executed on the main thread.</p>
+
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Removing and re-adding the persistent store is performed on a background queue.
+For binary and SQLite stores, this will also remove the store from disk.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">reset</span><span class="p">(</span><span class="n">onQueue</span> <span class="nv">queue</span><span class="p">:</span> <span class="n">dispatch_queue_t</span> <span class="o">=</span> <span class="nf">dispatch_get_global_queue</span><span class="p">(</span><span class="kt">QOS_CLASS_USER_INITIATED</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                              <span class="nv">completion</span><span class="p">:</span> <span class="p">(</span><span class="nv">result</span><span class="p">:</span> <span class="kt">StackResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A background queue on which to reset the stack. The default is a background queue with a <q>user initiated</q> quality of service class.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The closure to be called once resetting is complete. This is called on the main queue.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -347,7 +416,7 @@ and finally the persistent store.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2016 <a class="link" href="https://twitter.com/jesse_squires" target="_blank" rel="external">Jesse Squires</a>. All rights reserved. (Last updated: 2016-04-12)</p>
+          <p>&copy; 2016 <a class="link" href="https://twitter.com/jesse_squires" target="_blank" rel="external">Jesse Squires</a>. All rights reserved. (Last updated: 2016-05-06)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.6.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
