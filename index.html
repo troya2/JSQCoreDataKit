@@ -126,6 +126,7 @@
 <li>Provide better interoperability with Swift</li>
 <li>Harness Swift features and enforce Swift paradigms</li>
 <li>Bring functional paradigms to Core Data</li>
+<li>Make Core Data more <em>Swifty</em></li>
 <li>Simplify the processes of standing up the Core Data stack</li>
 <li>Aid in testing your Core Data models</li>
 <li>Reduce the boilerplate involved with Core Data</li>
@@ -182,7 +183,7 @@
 <span class="k">let</span> <span class="nv">factory</span> <span class="o">=</span> <span class="kt">CoreDataStackFactory</span><span class="p">(</span><span class="nv">model</span><span class="p">:</span> <span class="n">model</span><span class="p">)</span>
 
 <span class="k">let</span> <span class="nv">stack</span><span class="p">:</span> <span class="kt">CoreDataStack</span><span class="p">?</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">createStackInBackground</span> <span class="p">{</span> <span class="p">(</span><span class="nv">result</span><span class="p">:</span> <span class="kt">CoreDataStackResult</span><span class="p">)</span> <span class="k">in</span>
+<span class="n">factory</span><span class="o">.</span><span class="n">createStack</span> <span class="p">{</span> <span class="p">(</span><span class="nv">result</span><span class="p">:</span> <span class="kt">StackResult</span><span class="p">)</span> <span class="k">in</span>
     <span class="k">switch</span> <span class="n">result</span> <span class="p">{</span>
         <span class="k">case</span> <span class="o">.</span><span class="kt">Success</span><span class="p">(</span><span class="k">let</span> <span class="nv">s</span><span class="p">):</span>
             <span class="n">stack</span> <span class="o">=</span> <span class="n">s</span>
@@ -195,7 +196,17 @@
 <a href='#in_memory_stacks_for_testing' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h4 id='in_memory_stacks_for_testing'>In-memory stacks for testing</h4>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">inMemoryModel</span> <span class="o">=</span> <span class="kt">CoreDataModel</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="n">myName</span><span class="p">,</span> <span class="nv">bundle</span><span class="p">:</span> <span class="n">myBundle</span><span class="p">,</span> <span class="nv">storeType</span><span class="p">:</span> <span class="o">.</span><span class="kt">InMemory</span><span class="p">)</span>
 <span class="k">let</span> <span class="nv">factory</span> <span class="o">=</span> <span class="kt">CoreDataStackFactory</span><span class="p">(</span><span class="nv">model</span><span class="p">:</span> <span class="n">inMemoryModel</span><span class="p">)</span>
-<span class="k">let</span> <span class="nv">stack</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="nf">createStack</span><span class="p">()</span>
+
+<span class="k">let</span> <span class="nv">stack</span><span class="p">:</span> <span class="kt">CoreDataStack</span><span class="p">?</span>
+<span class="n">factory</span><span class="o">.</span><span class="n">createStack</span> <span class="p">{</span> <span class="p">(</span><span class="nv">result</span><span class="p">:</span> <span class="kt">StackResult</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">switch</span> <span class="n">result</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="o">.</span><span class="kt">Success</span><span class="p">(</span><span class="k">let</span> <span class="nv">s</span><span class="p">):</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="n">s</span>
+
+        <span class="k">case</span> <span class="o">.</span><span class="kt">Failure</span><span class="p">(</span><span class="k">let</span> <span class="nv">e</span><span class="p">):</span>
+            <span class="nf">print</span><span class="p">(</span><span class="s">"Error: </span><span class="se">\(</span><span class="n">e</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 <a href='#saving_a_managed_object_context' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h4 id='saving_a_managed_object_context'>Saving a managed object context</h4>
 <pre class="highlight swift"><code><span class="nf">saveContext</span><span class="p">(</span><span class="n">stack</span><span class="o">.</span><span class="n">mainContext</span><span class="p">)</span> <span class="p">{</span> <span class="n">result</span> <span class="k">in</span>
@@ -212,7 +223,7 @@
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">bundle</span> <span class="o">=</span> <span class="kt">NSBundle</span><span class="p">(</span><span class="nv">identifier</span><span class="p">:</span> <span class="s">"com.MyApp.MyModelFramework"</span><span class="p">)</span><span class="o">!</span>
 <span class="k">let</span> <span class="nv">model</span> <span class="o">=</span> <span class="kt">CoreDataModel</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"MyModel"</span><span class="p">,</span> <span class="nv">bundle</span><span class="p">:</span> <span class="n">bundle</span><span class="p">)</span>
 <span class="k">do</span> <span class="p">{</span>
-    <span class="k">try</span> <span class="n">model</span><span class="o">.</span><span class="nf">removeExistingModelStore</span><span class="p">()</span>
+    <span class="k">try</span> <span class="n">model</span><span class="o">.</span><span class="nf">removeExistingStore</span><span class="p">()</span>
 <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Error: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 <span class="p">}</span>
@@ -222,15 +233,18 @@
 <span class="k">let</span> <span class="nv">model</span> <span class="o">=</span> <span class="kt">CoreDataModel</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"MyModel"</span><span class="p">,</span> <span class="nv">bundle</span><span class="p">:</span> <span class="n">bundle</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">needsMigration</span> <span class="p">{</span>
     <span class="k">do</span> <span class="p">{</span>
-        <span class="k">try</span> <span class="nf">migrate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">try</span> <span class="n">model</span><span class="o">.</span><span class="nf">migrate</span><span class="p">()</span>
     <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
         <span class="nf">print</span><span class="p">(</span><span class="s">"Failed to migrate model: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
 <a href='#using_child_contexts' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h4 id='using_child_contexts'>Using child contexts</h4>
-<pre class="highlight swift"><code><span class="c1">// Create a background queue child context from the main queue context</span>
-<span class="k">let</span> <span class="nv">childContext</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="nf">childContext</span><span class="p">()</span>
+<pre class="highlight swift"><code><span class="c1">// Create a main queue child context from the main context</span>
+<span class="k">let</span> <span class="nv">childContext</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="nf">childContext</span><span class="p">(</span><span class="nv">concurrencyType</span><span class="p">:</span> <span class="o">.</span><span class="kt">MainQueueConcurrencyType</span><span class="p">)</span>
+
+<span class="c1">// Create a background queue child context from the background context</span>
+<span class="k">let</span> <span class="nv">childContext</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="nf">childContext</span><span class="p">(</span><span class="nv">concurrencyType</span><span class="p">:</span> <span class="o">.</span><span class="kt">PrivateQueueConcurrencyType</span><span class="p">)</span>
 </code></pre>
 <a href='#fetching' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h4 id='fetching'>Fetching</h4>
 <pre class="highlight swift"><code><span class="c1">// Create a FetchRequest&lt;T&gt;, where T is a phantom type</span>
@@ -239,7 +253,7 @@
 
 <span class="k">var</span> <span class="nv">results</span> <span class="o">=</span> <span class="p">[</span><span class="kt">MyModel</span><span class="p">]()</span>
 <span class="k">do</span> <span class="p">{</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="k">try</span> <span class="nf">fetch</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="n">request</span><span class="p">,</span> <span class="nv">inContext</span><span class="p">:</span> <span class="n">context</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">try</span> <span class="n">stack</span><span class="o">.</span><span class="n">mainContext</span><span class="o">.</span><span class="nf">fetch</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="n">request</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="k">catch</span> <span class="p">{</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Fetch error: </span><span class="se">\(</span><span class="n">error</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
@@ -250,7 +264,7 @@
 <a href='#deleting' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h4 id='deleting'>Deleting</h4>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">objects</span><span class="p">:</span> <span class="p">[</span><span class="kt">MyModel</span><span class="p">]</span> <span class="o">=</span> <span class="cm">/* array of MyModel objects */</span>
 
-<span class="nf">deleteObjects</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="nv">inContext</span><span class="p">:</span> <span class="n">context</span><span class="p">)</span>
+<span class="n">stack</span><span class="o">.</span><span class="n">mainContext</span><span class="o">.</span><span class="nf">delete</span><span class="p">(</span><span class="nv">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">)</span>
 
 <span class="c1">// Commit changes to remove objects from store</span>
 <span class="nf">saveContext</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
@@ -280,7 +294,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2016 <a class="link" href="https://twitter.com/jesse_squires" target="_blank" rel="external">Jesse Squires</a>. All rights reserved. (Last updated: 2016-05-06)</p>
+          <p>&copy; 2016 <a class="link" href="https://twitter.com/jesse_squires" target="_blank" rel="external">Jesse Squires</a>. All rights reserved. (Last updated: 2016-05-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.6.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
