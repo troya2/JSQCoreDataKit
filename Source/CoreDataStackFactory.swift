@@ -48,7 +48,7 @@ public struct CoreDataStackFactory: Equatable {
      A method to create the NSPersistentStoreCoordinator given the model.
      The default method produces a NSPersistentStoreCoordinator with the options provided to the initializer.
      */
-    public let persistentStoreCoordinatorFactory: ((managedObjectModel: NSManagedObjectModel, options: PersistentStoreOptions?) throws -> NSPersistentStoreCoordinator)?
+    public let persistentStoreCoordinatorFactory: ((_ managedObjectModel: NSManagedObjectModel, _ options: PersistentStoreOptions?) throws -> NSPersistentStoreCoordinator)?
 
 
     // MARK: Initialization
@@ -62,7 +62,7 @@ public struct CoreDataStackFactory: Equatable {
 
      - returns: A new `CoreDataStackFactory` instance.
      */
-    public init(model: CoreDataModel, options: PersistentStoreOptions? = defaultStoreOptions, persistentStoreCoordinatorFactory: ((managedObjectModel: NSManagedObjectModel, options: PersistentStoreOptions?) throws -> NSPersistentStoreCoordinator)? = nil) {
+    public init(model: CoreDataModel, options: PersistentStoreOptions? = defaultStoreOptions, persistentStoreCoordinatorFactory: ((_ managedObjectModel: NSManagedObjectModel, _ options: PersistentStoreOptions?) throws -> NSPersistentStoreCoordinator)? = nil) {
         self.model = model
         self.options = options
         self.persistentStoreCoordinatorFactory = persistentStoreCoordinatorFactory
@@ -138,12 +138,12 @@ public struct CoreDataStackFactory: Equatable {
         let storeCoordinator: NSPersistentStoreCoordinator
         
         if let persistentStoreCoordinatorFactory = self.persistentStoreCoordinatorFactory {
-            storeCoordinator = try persistentStoreCoordinatorFactory(managedObjectModel: model.managedObjectModel, options: options)
+            storeCoordinator = try persistentStoreCoordinatorFactory(model.managedObjectModel, options)
         } else {
             storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model.managedObjectModel)
-            try storeCoordinator.addPersistentStoreWithType(model.storeType.type,
-                                                            configuration: nil,
-                                                            URL: model.storeURL,
+			try storeCoordinator.addPersistentStore(ofType: model.storeType.type,
+			                                        configurationName: nil,
+			                                        at: model.storeURL,
                                                             options: options)
         }
 
